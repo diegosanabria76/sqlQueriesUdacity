@@ -1,0 +1,8 @@
+SELECT region.name as regionName, sales_reps.name as NombreDelVendedor, accounts.name as nombreDeCuenta
+FROM region
+join sales_reps
+on region.id= sales_reps.region_id
+join accounts
+ON sales_reps.id=accounts.sales_rep_id
+where region.name ='West'
+order by accounts.name asc;
