@@ -1,3 +1,139 @@
+
+/*
+Primer proyecto
+*/
+/*
+1). Select Country and city where most amount of money was generated.
+*/
+select country, city.city, sum(amount) as total_amount
+from country
+join city
+on country.country_id = city.country_id
+join address
+on city.city_id = address.city_id
+join customer
+on address.address_id = customer.address_id
+join payment 
+on customer.customer_id = payment.customer_id
+group by 1,2
+order by 3 desc
+
+/*
+2). Select the category with the highest number of movies
+*/
+
+
+select category.name, count(film.film_id) as Total_movies
+from category
+join film_category
+on category.category_id = film_category.category_id
+join film
+on film_category.film_id = film.film_id
+group by category.name
+order by total_movies desc;
+
+/*
+3). Select the films with the highst rentals
+*/
+
+select film.title,  count(rental_id) rental_counter,rental_rate
+from film
+join inventory
+on film.film_id = inventory.film_id
+join rental
+on inventory.inventory_id = rental.inventory_id
+group by title,rental_rate
+order by rental_counter desc
+
+/*
+4). organize the list to see  the most pay rental movies and the categories that they belong to.
+*/
+
+
+select category.name film_category,film.title, sum(amount) rental_amount
+from film
+join film_category
+on film.film_id = film_category.film_id
+join category
+on film_category.category_id = category.category_id
+join inventory
+on film.film_id = inventory.film_id
+join rental
+on inventory.inventory_id= rental.inventory_id
+join payment
+on rental.rental_id =payment.rental_id
+group by 1,2
+order by 3 desc;
+
+
+
+
+
+
+/*
+5)  Which one is The best rented movie per category? 
+*/
+
+select t2.film_category, t3.film_title,  t2.max_amount
+FROM  
+  (SELECT film_category, MAX(total_amount) max_amount
+  FROM(
+     select category.name film_category,film.title film_title, sum(amount) total_amount
+     from film
+     join film_category
+     on film.film_id = film_category.film_id
+     join category
+     on film_category.category_id = category.category_id
+     join inventory
+     on film.film_id = inventory.film_id
+     join rental
+     on inventory.inventory_id= rental.inventory_id
+     join payment
+     on rental.rental_id =payment.rental_id
+     group by 1,2
+     order by 3 desc) t1
+     GROUP BY 1) t2
+JOIN
+(
+
+
+
+ select category.name film_category,film.title film_title, sum(amount) total_amount
+   from film
+   join film_category
+   on film.film_id = film_category.film_id
+   join category
+   on film_category.category_id = category.category_id
+   join inventory
+   on film.film_id = inventory.film_id
+   join rental
+   on inventory.inventory_id= rental.inventory_id
+   join payment
+   on rental.rental_id =payment.rental_id
+   group by 1,2
+   order by 3 desc) t3
+   
+   ON t2.film_category = t3.film_category and t2.max_amount = t3.total_amount
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /*
 1).  Provide a table that provides the region for each sales_rep along with their associated accounts. This time only for the Midwest region.
 Your final table should include three columns: the region name, the sales rep name, and the account name.
