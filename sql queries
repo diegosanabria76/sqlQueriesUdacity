@@ -1,9 +1,12 @@
 
 /*
-Primer proyecto
+Diego Sanabria
+first project.
+
 */
 /*
-1). Select Country and city where most amount of money was generated.
+Query 1- query used for first insight.
+Select Country and city where most amount of money was generated.
 */
 select country, city.city, sum(amount) as total_amount
 from country
@@ -19,21 +22,36 @@ group by 1,2
 order by 3 desc
 
 /*
-2). Select the category with the highest number of movies
+Query 2- query used for second insight. 
+Classify Countries payments under quartile, quantile and percentile columns, please select the top 7.
 */
 
 
-select category.name, count(film.film_id) as Total_movies
-from category
-join film_category
-on category.category_id = film_category.category_id
-join film
-on film_category.film_id = film.film_id
-group by category.name
-order by total_movies desc;
+select  country,
+NTILE(4) over (partition by country order by total_amount) as payment_quartile,
+NTILE(5) over (partition by country order by total_amount) as payment_quintile,
+NTILE(100) over (partition by country order by total_amount) as payment_percentile
+from
+(select country, city.city, sum(amount) as total_amount
+from country
+join city
+on country.country_id = city.country_id
+join address
+on city.city_id = address.city_id
+join customer
+on address.address_id = customer.address_id
+join payment 
+on customer.customer_id = payment.customer_id
+group by 1,2
+order by 3 desc) table1
+order by total_amount desc
+limit 7
+
+
 
 /*
-3). Select the films with the highst rentals
+Query 3- query used for third insight. 
+Select the films with the highst rentals
 */
 
 select film.title,  count(rental_id) rental_counter,rental_rate
@@ -46,7 +64,8 @@ group by title,rental_rate
 order by rental_counter desc
 
 /*
-4). organize the list to see  the most pay rental movies and the categories that they belong to.
+Query 4- query used for fourth insight.
+organize the list to see  the most pay rental movies and the categories that they belong to.
 */
 
 
@@ -66,6 +85,7 @@ group by 1,2
 order by 3 desc;
 
 
+===================================================================end project version 2021-09-27=============================================================
 
 
 
@@ -129,7 +149,20 @@ JOIN
 
 
 
+================================================================end of project one===============================
+/*
+antigua query 2.
 
+*/
+
+select category.name, count(film.film_id) as Total_movies
+from category
+join film_category
+on category.category_id = film_category.category_id
+join film
+on film_category.film_id = film.film_id
+group by category.name
+order by total_movies desc;
 
 
 
